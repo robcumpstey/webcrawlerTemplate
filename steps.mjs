@@ -1,4 +1,6 @@
-
+import {
+    krakenSearchBox
+} from './paths.mjs'
 
 
 async function openMPAN(page, currentMPAN) {
@@ -16,24 +18,32 @@ async function openMPAN(page, currentMPAN) {
         await accountLink.nth(0).click()
     }
 
+
 }
 
-// If your process involves a new page opening, use this function
-// You'll need to capture the new page and assign it to a variable and return it to yourProcess()
-// See readme, Gemini or chatgpt can guide you on how to utilise this function if you're unsure
-async function detectNewPage(page, clickForNewPage) {
-    const context = page.context();
-    const newPageName = page.getByRole('button', { name: 'your button here!'})
-    const [newPageNamee] = await Promise.all([
-        context.waitForEvent('page'),
-        clickForNewPage.click()
+
+async function yourNextStep(page) {
+    const yourButton = page.locator('location');
+    await yourButton.click()
+}
+
+
+// If your process uses a popup use this function to capture the popup
+// Ask GPT or Gemini how to intergrate this into the flow of your other steps
+async function awaitPopup(page) {
+    const buttonTriggeringPopup = page.locator('location');
+    
+    const [yourPopup] = await Promise.all([
+        page.waitForEvent('popup'),
+        buttonTriggeringPopup.click()
     ]);
-    await newPageName.waitForLoadState();
+    await yourPopup.waitForLoadState();
 
-    return newPageName
+    return yourPopup
 }
 
+
+// All of your steps must be exported to run.mjs from here
 export {
-    openMPAN,
-    detectNewPage
+    openMPAN
 }

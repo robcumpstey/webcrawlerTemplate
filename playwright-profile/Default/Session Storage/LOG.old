@@ -1,3 +1,12 @@
-2026/03/27-12:00:23.869 1d2916 Reusing MANIFEST /Users/rob.cumpstey/Code/webcrawlers 26/playwright-profile/Default/Session Storage/MANIFEST-000001
-2026/03/27-12:00:23.872 1d2916 Recovering log #7
-2026/03/27-12:00:23.874 1d2916 Reusing old log /Users/rob.cumpstey/Code/webcrawlers 26/playwright-profile/Default/Session Storage/000007.log 
+2026/04/08-14:07:24.123 36968 Reusing MANIFEST /Users/rob.cumpstey/Code/mhhsCrawler/mhhsCrawler/playwright-profile/Default/Session Storage/MANIFEST-000001
+2026/04/08-14:07:24.129 36968 Recovering log #27
+2026/04/08-14:07:24.131 36968 Reusing old log /Users/rob.cumpstey/Code/mhhsCrawler/mhhsCrawler/playwright-profile/Default/Session Storage/000027.log 
+2026/04/08-14:23:20.936 3696b Level-0 table #32: started
+2026/04/08-14:23:20.942 3696b Level-0 table #32: 9619 bytes OK
+2026/04/08-14:23:20.949 3696b Delete type=0 #27
+2026/04/08-14:50:52.479 3696b Level-0 table #34: started
+2026/04/08-14:50:52.482 3696b Level-0 table #34: 9397 bytes OK
+2026/04/08-14:50:52.484 3696b Delete type=0 #31
+2026/04/08-15:06:24.838 36968 Level-0 table #36: started
+2026/04/08-15:06:24.847 36968 Level-0 table #36: 9340 bytes OK
+2026/04/08-15:06:24.856 36968 Delete type=0 #33

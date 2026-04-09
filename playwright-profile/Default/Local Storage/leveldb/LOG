@@ -1,3 +1,23 @@
-2026/03/27-12:01:32.159 1d2fe3 Reusing MANIFEST /Users/rob.cumpstey/Code/webcrawlers 26/playwright-profile/Default/Local Storage/leveldb/MANIFEST-000001
-2026/03/27-12:01:32.162 1d2fe3 Recovering log #4
-2026/03/27-12:01:32.162 1d2fe3 Reusing old log /Users/rob.cumpstey/Code/webcrawlers 26/playwright-profile/Default/Local Storage/leveldb/000004.log 
+2026/04/08-16:55:38.960 53eef Reusing MANIFEST /Users/rob.cumpstey/Code/mhhsCrawler/mhhsCrawler/playwright-profile/Default/Local Storage/leveldb/MANIFEST-000001
+2026/04/08-16:55:38.963 53eef Recovering log #150
+2026/04/08-16:55:38.965 53eef Level-0 table #153: started
+2026/04/08-16:55:38.968 53eef Level-0 table #153: 137863 bytes OK
+2026/04/08-16:55:38.971 53eef Delete type=0 #150
+2026/04/08-16:58:39.586 53ef2 Level-0 table #156: started
+2026/04/08-16:58:39.590 53ef2 Level-0 table #156: 26611 bytes OK
+2026/04/08-16:58:39.593 53ef2 Delete type=0 #154
+2026/04/08-17:02:09.496 53ef2 Level-0 table #158: started
+2026/04/08-17:02:09.502 53ef2 Level-0 table #158: 236608 bytes OK
+2026/04/08-17:02:09.505 53ef2 Delete type=0 #155
+2026/04/08-17:02:09.507 53ef2 Compacting 4@0 + 1@1 files
+2026/04/08-17:02:09.516 53ef2 Generated table #159@0: 28 keys, 248206 bytes
+2026/04/08-17:02:09.517 53ef2 Compacted 4@0 + 1@1 files => 248206 bytes
+2026/04/08-17:02:09.518 53ef2 compacted to: files[ 0 1 1 0 0 0 0 ]
+2026/04/08-17:02:09.518 53ef2 Delete type=2 #149
+2026/04/08-17:02:09.519 53ef2 Delete type=2 #158
+2026/04/08-17:02:09.519 53ef2 Delete type=2 #156
+2026/04/08-17:02:09.519 53ef2 Delete type=2 #153
+2026/04/08-17:02:09.519 53ef2 Delete type=2 #151
+2026/04/08-17:02:29.006 53eef Level-0 table #161: started
+2026/04/08-17:02:29.010 53eef Level-0 table #161: 27974 bytes OK
+2026/04/08-17:02:29.014 53eef Delete type=0 #157
