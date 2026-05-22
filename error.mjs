@@ -13,14 +13,14 @@ async function SUCCESS(currentMPAN, xlsFile) {
     const worksheet = workbook.Sheets[sheetName];
     const data = xlsx.utils.sheet_to_json(worksheet);
 
-    const targetRow = data.find(row => row.MPAN == currentMPAN);
+    const targetRow = data.find(row => row.MPxN == currentMPxN);
 
     if (targetRow) {
         targetRow.Worked = 'DONE'
-        console.log(`Successfully marked ${currentMPAN} as DONE.`);
+        console.log(`Successfully marked ${currentMPxN} as DONE.`);
     } else {
-        console.log(`Success not logged, could not find MPAN ${currentMPAN} in the sheet.`);
-        return; // Exit early if it wasn't found
+        console.log(`Success not logged, could not find MPAN ${currentMPxN} in the sheet.`);
+        return;
     }
 
     const updatedWorksheet = xlsx.utils.json_to_sheet(data);
@@ -31,7 +31,7 @@ async function SUCCESS(currentMPAN, xlsFile) {
 }
 
 
-async function FAILURE(currentMPAN, xlsFile, Error) {
+async function FAILURE(currentMPxN, xlsFile, message) {
     const fileBuffer = fs.readFileSync(xlsFile);
     const workbook = xlsx.read(fileBuffer, { type: 'buffer' });
 
@@ -39,13 +39,24 @@ async function FAILURE(currentMPAN, xlsFile, Error) {
     const worksheet = workbook.Sheets[sheetName];
     const data = xlsx.utils.sheet_to_json(worksheet);
 
-    const targetRow = data.find(row => row.MPAN == currentMPAN);
+    const targetRow = data.find(row => row.MPxN == currentMPxN);
+    console.log(`Printing message >`, message)
 
+    // Add message to sheet, if one is included, default without is 'Error'
     if (targetRow) {
-        targetRow.Error = 'Error';
-        console.log(`Marked ${currentMPAN} as ERROR.`);
+        if (message === 'Your message') {
+            targetRow.Error = 'No Reg';
+            console.log(`Marked ${currentMPxN} as No Reg.`);
+        }
+        else if (message === 'xxx') {
+            // Successive error messages go here
+        }
+        else {
+            // Successive error messages go here
+        }
+        
     } else {
-        console.log(`Failure not logged, could not find MPAN ${currentMPAN} in the sheet.`);
+        console.log(`Failure not logged, could not find MPxN ${currentMPxN} in the sheet.`);
         return;
     }
 

@@ -3,9 +3,9 @@ import {
 } from './paths.mjs'
 
 
-async function openMPAN(page, currentMPAN) {
+async function openMPxN(page, currentMPAN) {
     // --- Search MPAN + check for multiple account sites ---
-    await page.locator(krakenSearchBox).fill(currentMPAN)
+    await page.locator(krakenSearchBox).fill(currentMPxN)
     await page.locator(krakenSearchBox).press('Enter');
 
     // --- If multiple portfolio property loads, navigate to MPAN landing page ---
@@ -30,9 +30,7 @@ async function yourNextStep(page) {
 
 // If your process uses a popup use this function to capture the popup
 // Ask GPT or Gemini how to intergrate this into the flow of your other steps
-async function awaitPopup(page) {
-    const buttonTriggeringPopup = page.locator('location');
-    
+async function awaitPopup(page, buttonTriggeringPopup) {
     const [yourPopup] = await Promise.all([
         page.waitForEvent('popup'),
         buttonTriggeringPopup.click()
@@ -43,7 +41,51 @@ async function awaitPopup(page) {
 }
 
 
+// If your crawler wants to check whether or not a box is populated, use this function
+// This is also used as a wrapper function if you want to populate the box in question from a sheet
+async function registrationCheck(disconnectPopup, currentMPAN, xlsFile, regIDDB) {
+    const checkBox = yourPage.locator('#id_registration_id')
+    const boxContent = await checkBox.inputValue()
+    await operationalDelay(yourPage)
+
+    if (inputForBox == "") {
+            const lookupValue = inputDB[currentMPxN] || '';
+            console.log(`${currentMPxN} lookup equates to > ${lookupValue}`)
+
+            if (lookupValue == "") {
+                throw new Error(`No Reg :: The registration ID for ${currentMPAN} is not populated`)
+            } else {
+                await checkBox.fill(lookupValue)
+            }
+        }
+    
+    console.log('Completion message')
+    SUCCESS(currentMPxN, xlsFile)
+}
+
+async function createInputLookup() {
+    // --- Load user spreadsheet giving MPANs to crawl ---
+        const xlsFile = "./LOOKUP VALUES.xlsx"; // *** Change this .xlsx to match your sheet ***
+        const fileBuffer = fs.readFileSync(xlsFile);
+        const workbook = xlsx.read(fileBuffer, { type: 'buffer' });
+        const regIDSheetName = 'LOOKUP TAB' // *** Change this string to match your sheet ***
+        const sheet = workbook.Sheets[regIDSheetName];
+        const rows = xlsx.utils.sheet_to_json(sheet);
+    
+        const lookupValue = {};
+        for (const row of rows) {
+            lookupDB[row.MPxN] = row.Value
+        }
+
+        return lookupDB
+    }
+
+
 // All of your steps must be exported to run.mjs from here
 export {
-    openMPAN
+    openMPxN,
+    yourNextStep,
+    awaitPopup,
+    registrationCheck,
+    createInputLookup
 }

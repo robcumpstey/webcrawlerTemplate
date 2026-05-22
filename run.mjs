@@ -2,15 +2,17 @@ import { chromium } from 'playwright';
 import * as xlsx from 'xlsx';
 import fs from 'fs';
 
-
 import {
     SUCCESS,
     FAILURE
 } from './error.mjs'
 
-
 import {
-    openMPAN
+    openMPxN,
+    yourNextStep,
+    awaitPopup,
+    registrationCheck,
+    createInputLookup
 } from './steps.mjs'
 
 
@@ -18,83 +20,93 @@ import {
 (async () => {
     const userDataDir = './playwright-profile';
     const context = await chromium.launchPersistentContext(userDataDir, { 
-        headless: false 
+        headless: false, 
+        viewport: null,
+        args: ['--window-size=1000, 800']
     });
 
     console.log("Log in manually to kraken via the open window using your usual credentials >> ")
     const page = context.pages().length > 0 ? context.pages()[0] : await context.newPage();
 
     await page.goto("https://kraken.octopus.energy/");
+    
+    // Timer so first MPxN isn't forced into queue while kraken still opening
+    await waitForTimeout(30000)
     await runProcess(page)
 })();
 
 
 // As per readme instructions, please link to your spreadsheet here
-// The spreadsheets name must match xlsFile, and it must have 'mpan', 'worked', 'error' columns
+// The spreadsheets name must match xlsFile, and it must have 'mpxn', 'worked', 'error' columns
 // >>
 async function runProcess(page) {
-    // --- Load user spreadsheet giving MPANs to crawl ---
-    const xlsFile = "./your_sheet.xlsx";
+    // --- Load user spreadsheet giving MPxNs to crawl ---
+    const xlsFile = "./YOURSPREADSHEET HERE.xlsx"; // *** Add spreadsheet name here ***
     const fileBuffer = fs.readFileSync(xlsFile);
     const workbook = xlsx.read(fileBuffer, { type: 'buffer' });
-    const firstSheetName = workbook.SheetNames[0];
-    const sheet = workbook.Sheets[firstSheetName];
+    const targetSheetName = 'For Crawler'
+    const sheet = workbook.Sheets[targetSheetName];
 
     // --- Convert to JSON array ---
     const rows = xlsx.utils.sheet_to_json(sheet);
     console.log(`Successfully loaded ${rows.length} rows from the spreadsheet.`);
 
-    // --- Iterate through array of MPANs, skipping any w/ worked or error tags ---
+    // --- If you're crawler makes use of a lookup for inputs, create the DB here ---
+    const inputDB = await Lookup()
+
+    // --- Iterate through array of MPxNs, skipping any w/ worked or error tags ---
     for (const row of rows) {
         if (row.Worked || row.Error) {
             continue;
-        } else if (row.MPAN) {
-            let currentMPAN = row.MPAN.toString();
-            console.log(currentMPAN)
-            await backfillMPANs(page, currentMPAN, xlsFile);
+        } else if (row.MPxN) {
+            let currentMPxN = row.MPxN.toString();
+            console.log(currentMPxN)
+            await yourProcess(page, currentMPxN, xlsFile, inputDB);
         }
     }
 }
 
 
-async function yourProcess(page, currentMPAN, xlsFile) {
-    // If your process makes use of any popups, you need to assign these as variables here
-    // When calling the step which open your popups, reassign their returns to these variables
+async function yourProcess(page, currentMPxN, xlsFile, inputDB) {
     let yourPopup = null;
     
     try {
         await Promise.race([
                 (async () => {
-                    // Run steps
-                    await openMPAN(page, currentMPAN)
+                    // Run steps, call the steps for your process imported from steps.mjs here >>
+                    await openMPxN(page, currentMPxN)
                     
-                    // Pseudocode example of popup assignment
-                    const yourPopup = await PopupStep(page)
+                    // *** If your process needs to capture a popup, call the function here ***
+                    yourPopup = await openYourPopup(page)
                     
-                    // Update sheet after completion
-                    await SUCCESS(currentMPAN, xlsFile)
+                    // *** If your process needs to input information, call the function here ***
+                    await populateBox(yourPage, currentMPxN)
                 })(),
 
+                // *** This can be used to set a custom timeout, say after 20 or 30 seconds if the crawler is stuck ***
                 new Promise((_, reject) => 
-                        setTimeout(() => reject(new Error('CustomTimeout: Process took longer than 20 seconds')), 20000)
+                        setTimeout(() => reject(new Error('CustomTimeout: Process took longer than 30 seconds')), 20000)
                     )
             ])
         } catch (error) {
-            console.log(error);
-            await FAILURE(currentMPAN, xlsFile)
-        
-            // Check if the error was for custom timeout
-            if (Error.message && Error.message.includes('CustomTimeout')) {
-                console.log(`Skipping MPAN ${currentMPAN} due to 10-second timeout.`);
-            }
-            
             // Stop loop if browser is closed manually or accidentally, *** dont remove ***
-            if (Error.message && Error.message.includes('Target page, context or browser has been closed')) {
+            if (error.message && error.message.includes('Target page, context or browser has been closed')) {
                 console.error("CRITICAL: Browser or page was closed. Terminating the script completely.");
                 process.exit(1);
             }
+            
+            // --- For other exceptions, encode message and add to spreadsheet via FAILURE() ---
+            let message = null
+            console.log("Full traceback:\n", error.stack)
+            
+            // *** Setup catches + error reporting for possible errors or traps in process ***
+            if (error.message && error.message.includes('xxx')){
+                message = 'Your message here'
+            }
+            await FAILURE(currentMPxN, xlsFile, message)
+            
         } finally {
-            // Close the restartButtonPage popup as it lingering on edge cases can cause crashes
+            // *** If using a popup you need to keep this code as it will close auxiliary windows after each loop ***
             if (yourPopup) {
             try {
                 if (typeof yourPopup.isClosed === 'function' && !yourPopup.isClosed()) {
@@ -103,7 +115,7 @@ async function yourProcess(page, currentMPAN, xlsFile) {
                     await yourPopup.close();
                 }
             } catch (closeError) {
-                console.log(`Warning: Failed to gracefully close popup for ${currentMPAN}: ${closeError.message}`);
+                console.log(`Warning: Failed to gracefully close popup for ${currentMPxN}: ${closeError.message}`);
             }
         }
     }
