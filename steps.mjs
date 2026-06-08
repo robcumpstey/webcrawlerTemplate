@@ -63,18 +63,15 @@ async function registrationCheck(disconnectPopup, currentMPAN, xlsFile, regIDDB)
     SUCCESS(currentMPxN, xlsFile)
 }
 
+// --- This will create a database object from your chosen tab, to later be used for lookups ---
 async function createInputLookup() {
     // --- Load user spreadsheet giving MPANs to crawl ---
-        const xlsFile = "./LOOKUP VALUES.xlsx"; // *** Change this .xlsx to match your sheet ***
-        const fileBuffer = fs.readFileSync(xlsFile);
-        const workbook = xlsx.read(fileBuffer, { type: 'buffer' });
-        const regIDSheetName = 'LOOKUP TAB' // *** Change this string to match your sheet ***
-        const sheet = workbook.Sheets[regIDSheetName];
-        const rows = xlsx.utils.sheet_to_json(sheet);
+        let targetSheet = 'Your Tab Here'
+        const targetTab = await retrieveSheet(targetSheet)
     
-        const lookupValue = {};
-        for (const row of rows) {
-            lookupDB[row.MPxN] = row.Value
+        const lookupDB = {};
+        for (const row of targetTab) {
+            lookupDB[row.MPxN] = row.Field
         }
 
         return lookupDB

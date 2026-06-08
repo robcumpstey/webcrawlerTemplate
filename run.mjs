@@ -15,6 +15,11 @@ import {
     createInputLookup
 } from './steps.mjs'
 
+import {
+    retrieveSheet,
+    sheets
+} from './api.mjs'
+
 
 // This runs automatically and opens a window for you to login manually to kraken
 (async () => {
@@ -40,15 +45,11 @@ import {
 // The spreadsheets name must match xlsFile, and it must have 'mpxn', 'worked', 'error' columns
 // >>
 async function runProcess(page) {
-    // --- Load user spreadsheet giving MPxNs to crawl ---
-    const xlsFile = "./YOURSPREADSHEET HERE.xlsx"; // *** Add spreadsheet name here ***
-    const fileBuffer = fs.readFileSync(xlsFile);
-    const workbook = xlsx.read(fileBuffer, { type: 'buffer' });
-    const targetSheetName = 'For Crawler'
-    const sheet = workbook.Sheets[targetSheetName];
-
-    // --- Convert to JSON array ---
-    const rows = xlsx.utils.sheet_to_json(sheet);
+    // --- Load user spreadsheet giving MPANs to crawl ---
+    let targetSheet = 'For Crawler'
+    const outputSheet = '1WzclcVNswsUBsei3RX32kyICjnyHj3dMMO6ggsp8F14';
+    
+    const rows = await retrieveSheet(targetSheet)
     console.log(`Successfully loaded ${rows.length} rows from the spreadsheet.`);
 
     // --- If you're crawler makes use of a lookup for inputs, create the DB here ---
