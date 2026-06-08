@@ -42,12 +42,12 @@ import {
 
 
 // As per readme instructions, please link to your spreadsheet here
-// The spreadsheets name must match xlsFile, and it must have 'mpxn', 'worked', 'error' columns
-// >>
+// Remember that the target gsheet must be shared to the email below >>
+// 'python-api@active-sheets.iam.gserviceaccount.com'
 async function runProcess(page) {
     // --- Load user spreadsheet giving MPANs to crawl ---
     let targetSheet = 'For Crawler'
-    const outputSheet = '1WzclcVNswsUBsei3RX32kyICjnyHj3dMMO6ggsp8F14';
+    const outputSheet = 'Sheet link code here';
     
     const rows = await retrieveSheet(targetSheet)
     console.log(`Successfully loaded ${rows.length} rows from the spreadsheet.`);
